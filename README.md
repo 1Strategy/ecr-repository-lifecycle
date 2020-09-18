@@ -10,25 +10,26 @@ For ease of use, update the parameter file titled ecr_lifecycle_params.json in t
 
 |Parameter|Description|Example|
 |------|------|-------|
-|Owner|The name of the person or team the template and resource should be associated with|Jane|
+|Owner|The name of the person or team the template and resource should be associated with. Must be lower case, as it is used as part of the repo name, which has naming restrictions.|jane|
 
 ## How to Deploy
 
 ### Prerequisites
 
-To deploy this stack via the command line, you will need the AWS CLI.
+To deploy the stack via the command line, you will need the AWS CLI.
 
-To use a separate file to update a parameter, you can update and use the ecr_lifecycle_params.json file.
+To use a separate file to update parameter(s), you can update and use the ecr_lifecycle_params.json file.
 
 ### Validate/Lint Stack
 
 ```bash
-aws cloudformation validate-template --template-body file://ecr_lifecycle.yaml 
+aws cloudformation validate-template \
+--template-body file://ecr_lifecycle.yaml
 ```
 
 ### Deploy Stack
 
-Make certain you are in the directory parent of this repository, then run the following command:
+Navigate to the parent directory of this repository, then run the following command:
 
 ```bash
 aws cloudformation deploy \
