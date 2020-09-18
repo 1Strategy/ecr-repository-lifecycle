@@ -4,7 +4,8 @@ Parameters:
   Owner:
     Type: String
     Description: >-
-      Individual or team who created the resource. Must be lower case, as it is used as part of the repository name. 
+      Individual or team who created the resource. 
+      Must be lower case, as it is used as part of the repository name. 
 
 Resources:
   ECRRepository:
@@ -29,4 +30,4 @@ Resources:
           }
       Tags:
         - Key: Owner
-          Value: !Sub ${Owner}
+          Value: !Ref Owner
