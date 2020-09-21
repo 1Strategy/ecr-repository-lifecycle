@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creates an ECR repository with a lifecycle policy for repository images.
+Parameters:
+  Owner:
+    Type: String
+    Description: >-
+      Individual or team who created the resource. 
+      Must be lower case, as it is used as part of the repository name. 
+  RoleThatCanAccessRepo:
+    Type: String
+    Default: ""
+    Description: >-
+      The IAM user(s) or role(s) that have access to the ECR repository, and what actions they can perform on it. 
+      By default, only the repository owner has access to a repository. 
+
+Conditions:
+    CreateRepositoryPolicyText: !Not [!Equals [!Ref RoleThatCanAccessRepo, ""]]
+
+Resources:
+  ECRRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Sub ${Owner}-repo-with-lifecycle
+      LifecyclePolicy:
+        # For any tag value, keep the last countNumber value of images.
+        LifecyclePolicyText: |
+          {
+            "rules": [
+              {
+                "rulePriority": 1,
+                "description": "Only keep 10 images",
+                "selection": {
+                  "tagStatus": "any",
+                  "countType": "imageCountMoreThan",
+                  "countNumber": 10
+              },
+              "action": { "type": "expire" }
+            }]
+          }
+      Tags:
+        - Key: Owner
+          Value: !Sub ${Owner}@1strategy.com
+
+  ECRRepositoryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Condition: CreateRepositoryPolicyText
+    Properties:
+      Description: Policy for creating an ECR Repository
+      ManagedPolicyName: !Sub ${Owner}-RepoPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: AllowPushPull
+          Effect: "Allow"
+          Action: 
+            - "ecr:GetDownloadUrlForLayer"
+            - "ecr:BatchGetImage"
+            - "ecr:BatchCheckLayerAvailability"
+            - "ecr:PutImage"
+            - "ecr:InitiateLayerUpload"
+            - "ecr:UploadLayerPart"
+            - "ecr:CompleteLayerUpload"
+          Resource:
+            - !Sub arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${Owner}-repo-with-lifecycle
+      Roles: 
+        - !Ref RoleThatCanAccessRepo 
