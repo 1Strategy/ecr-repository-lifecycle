@@ -1,6 +1,6 @@
 # ECR Repository and LifeCycle Policy
 
-This repo contains a small CloudFormation template for creating a lifecycle policy for images in an Amazon ECR repository. There are a variety of lifecycle policies that may be written that use age of images, number of images or even image tag value to limit the crowding in an ECR repository.
+This repo contains a CloudFormation template for creating a lifecycle policy for images in an Amazon ECR repository. There are a variety of lifecycle policies that may be written that use age of images, number of images or even image tag value to limit the crowding in an ECR repository.
 
 As a POC, this template creates a simple policy that allows ten images to linger in the repository, with older images being removed as newer ones are added.
 
